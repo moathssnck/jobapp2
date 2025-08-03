@@ -954,7 +954,7 @@ export default function ArabicJobApplicationForm() {
           {/* زر الإرسال */}
           <Card>
             <CardContent className="pt-6">
-              <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+              <Button type="submit" className="w-full  bg-linear-65 from-purple-500 to-pink-500" size="lg" disabled={isSubmitting}>
                 {isSubmitting ? "جاري إرسال الطلب..." : "إرسال طلب التوظيف"}
               </Button>
 
