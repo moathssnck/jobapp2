@@ -11,7 +11,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { User, Briefcase, GraduationCap, Upload, CheckCircle, X, Plus, Camera, BadgeIcon as IdCard } from "lucide-react"
+import { User, Briefcase, GraduationCap, Upload, CheckCircle, X, Plus, Camera } from "lucide-react"
+import ImageUpload from "@/components/image-upload"
 
 interface WorkExperience {
   id: string
@@ -66,6 +67,8 @@ export default function ArabicJobApplicationForm() {
     workAuthorization: "",
     backgroundCheck: false,
     drugTest: false,
+    idPhotoUrl: "",
+    nationalIdCopyUrl: "",
   })
 
   const [workExperience, setWorkExperience] = useState<WorkExperience[]>([])
@@ -201,7 +204,7 @@ export default function ArabicJobApplicationForm() {
         }
       })
 
-      const response = await fetch("/api/applications", {
+      const response = await fetch("/api/applications-firestore", {
         method: "POST",
         body: submitFormData,
       })
@@ -261,6 +264,8 @@ export default function ArabicJobApplicationForm() {
                   workAuthorization: "",
                   backgroundCheck: false,
                   drugTest: false,
+                  idPhotoUrl: "",
+                  nationalIdCopyUrl: "",
                 })
                 setWorkExperience([])
                 setEducation([])
@@ -309,65 +314,34 @@ export default function ArabicJobApplicationForm() {
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* الصورة الشخصية */}
-                <div className="space-y-4">
-                  <Label htmlFor="idPhoto" className="text-base font-medium">
-                    الصورة الشخصية *
-                  </Label>
-                  <div className="flex flex-col items-center space-y-4">
-                    {idPhotoPreview ? (
-                      <div className="relative">
-                        <img
-                          src={idPhotoPreview || "/placeholder.svg"}
-                          alt="صورة شخصية"
-                          className="w-32 h-32 object-cover rounded-lg border-2 border-gray-300"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="sm"
-                          className="absolute -top-2 -right-2 rounded-full w-6 h-6 p-0"
-                          onClick={() => {
-                            setIdPhotoPreview(null)
-                            handleFileChange("idPhoto", null)
-                          }}
-                        >
-                          <X className="w-3 h-3" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-                        <Camera className="w-8 h-8 text-gray-400" />
-                      </div>
-                    )}
-                    <Input
-                      id="idPhoto"
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileChange("idPhoto", e.target.files?.[0] || null)}
-                      className={errors.idPhoto ? "border-red-500" : ""}
-                    />
-                    {errors.idPhoto && <p className="text-red-500 text-sm">{errors.idPhoto}</p>}
-                  </div>
-                </div>
+                <ImageUpload
+                  label="الصورة الشخصية"
+                  required
+                  onImageUploaded={(url) => {
+                    setFiles((prev) => ({ ...prev, idPhoto: new File([], "uploaded") }))
+                    // Store the URL separately for form submission
+                    setFormData((prev) => ({ ...prev, idPhotoUrl: url }))
+                  }}
+                  onImageRemoved={() => {
+                    setFiles((prev) => ({ ...prev, idPhoto: null }))
+                    setFormData((prev) => ({ ...prev, idPhotoUrl: "" }))
+                  }}
+                  maxSize={10}
+                />
 
                 {/* نسخة الهوية الوطنية */}
-                <div className="space-y-4">
-                  <Label htmlFor="nationalIdCopy" className="text-base font-medium">
-                    نسخة من الهوية الوطنية
-                  </Label>
-                  <div className="flex flex-col items-center space-y-4">
-                    <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-                      <IdCard className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <Input
-                      id="nationalIdCopy"
-                      type="file"
-                      accept="image/*,.pdf"
-                      onChange={(e) => handleFileChange("nationalIdCopy", e.target.files?.[0] || null)}
-                    />
-                    {files.nationalIdCopy && <p className="text-sm text-green-600">✓ {files.nationalIdCopy.name}</p>}
-                  </div>
-                </div>
+                <ImageUpload
+                  label="نسخة من الهوية الوطنية"
+                  onImageUploaded={(url) => {
+                    setFiles((prev) => ({ ...prev, nationalIdCopy: new File([], "uploaded") }))
+                    setFormData((prev) => ({ ...prev, nationalIdCopyUrl: url }))
+                  }}
+                  onImageRemoved={() => {
+                    setFiles((prev) => ({ ...prev, nationalIdCopy: null }))
+                    setFormData((prev) => ({ ...prev, nationalIdCopyUrl: "" }))
+                  }}
+                  maxSize={10}
+                />
               </div>
             </CardContent>
           </Card>
@@ -467,13 +441,11 @@ export default function ArabicJobApplicationForm() {
                       <SelectValue placeholder="اختر الجنسية" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="omani">عماني</SelectItem>
                       <SelectItem value="saudi">سعودي</SelectItem>
-                      <SelectItem value="kuwait">كويتي</SelectItem>
+                      <SelectItem value="egyptian">مصري</SelectItem>
                       <SelectItem value="jordanian">أردني</SelectItem>
                       <SelectItem value="lebanese">لبناني</SelectItem>
-                      <SelectItem value="syrian">قطري</SelectItem>
-                      <SelectItem value="bahrin">بحريني</SelectItem>
+                      <SelectItem value="syrian">سوري</SelectItem>
                       <SelectItem value="palestinian">فلسطيني</SelectItem>
                       <SelectItem value="other">أخرى</SelectItem>
                     </SelectContent>
@@ -528,7 +500,7 @@ export default function ArabicJobApplicationForm() {
                     id="city"
                     value={formData.city}
                     onChange={(e) => handleInputChange("city", e.target.value)}
-                    placeholder="ادخل اسم المدينة"
+                    placeholder="الرياض"
                   />
                 </div>
                 <div>
@@ -537,7 +509,7 @@ export default function ArabicJobApplicationForm() {
                     id="state"
                     value={formData.state}
                     onChange={(e) => handleInputChange("state", e.target.value)}
-                    placeholder="ادخل اسم المنطقة"
+                    placeholder="منطقة الرياض"
                   />
                 </div>
                 <div>
