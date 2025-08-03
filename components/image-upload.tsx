@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { Camera, Upload, X, Loader2 } from "lucide-react"
-
 interface ImageUploadProps {
   label: string
   required?: boolean
