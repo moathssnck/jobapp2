@@ -87,8 +87,12 @@ const initialFormData = {
 }
 
 const initialFiles = {
-  resume: null,
-  coverLetterFile: null,
+  resume: {
+    name:undefined
+  },
+  coverLetterFile: {
+    name:undefined
+  },
   idPhoto: null,
   nationalIdCopy: null,
 }
@@ -598,7 +602,7 @@ export function ArabicJobApplicationForm(): ReactElement {
                           onChange={(e) => handleFileChange("resume", e.target.files?.[0] || null)}
                           className="mt-1"
                         />
-                        {files.resume && <p className="text-sm text-green-600 mt-1">✓ {files.resume.name}</p>}
+                        {files.resume && <p className="text-sm text-green-600 mt-1">✓ {files.resume!.name!}</p>}
                       </div>
                       <div>
                         <Label htmlFor="coverLetterFile">خطاب التغطية (اختياري)</Label>
@@ -610,7 +614,7 @@ export function ArabicJobApplicationForm(): ReactElement {
                           className="mt-1"
                         />
                         {files.coverLetterFile && (
-                          <p className="text-sm text-green-600 mt-1">✓ {files.coverLetterFile.name}</p>
+                          <p className="text-sm text-green-600 mt-1">✓ {files.coverLetterFile?.name || null}</p>
                         )}
                       </div>
                     </div>
