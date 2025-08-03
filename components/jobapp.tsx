@@ -282,7 +282,7 @@ export function ArabicJobApplicationForm(): ReactElement {
                   <div className="flex flex-col items-center text-center md:flex-row md:text-right">
                     <div
                       className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                        currentStep >= step.id ? "bg-green-600 text-white" : "bg-gray-200 text-gray-500"
+                        currentStep >= step.id ? "bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-[#4ade80] via-[#14b8a6] to-[#0891b2] text-white" : "bg-gray-200 text-gray-500"
                       }`}
                     >
                       {currentStep > step.id ? <CheckCircle className="w-6 h-6" /> : <step.icon className="w-5 h-5" />}
@@ -874,7 +874,7 @@ export function ArabicJobApplicationForm(): ReactElement {
               {!(currentStep > 1) && <div />}
               {/* This is to maintain justify-between */}
               {currentStep < steps.length && (
-                <Button type="button" onClick={nextStep} size="lg" className="w-full sm:w-auto bg-green-600">
+                <Button type="button" onClick={nextStep} size="lg" className="w-full sm:w-auto bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-[#4ade80] via-[#14b8a6] to-[#0891b2]">
                   التالي
                   <ArrowLeft className="w-4 h-4 ml-2" />
                 </Button>
