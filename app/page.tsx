@@ -273,11 +273,12 @@ export default function ArabicJobApplicationForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4" dir="rtl">
+    <div className="min-h-screen bg-blue-50 py-8 px-4" dir="rtl">
       <div className="max-w-4xl mx-auto">
         <Card className="mb-6">
           <CardHeader className="text-center">
-            <CardTitle className="text-3xl font-bold">طلب توظيف</CardTitle>
+            <CardTitle className="text-3xl font-bold">شركة الاتحاد المتكاملة للتوظيف</CardTitle>
+            <CardTitle className="text-2xl ">طلب توظيف</CardTitle>
             <CardDescription>يرجى ملء جميع الأقسام لإكمال طلب التوظيف الخاص بك</CardDescription>
           </CardHeader>
         </Card>
