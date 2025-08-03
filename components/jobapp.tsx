@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-
 import type { ReactElement } from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -29,7 +28,6 @@ import {
 import { SubmissionSuccess } from "./sucess"
 import { ImageUpload } from "./image-upload"
 
-
 interface WorkExperience {
   id: string
   company: string
@@ -47,6 +45,13 @@ interface Education {
   field: string
   graduationYear: string
   gpa?: string
+}
+
+interface ApplicationFiles {
+  resume: File | null
+  coverLetterFile: File | null
+  idPhoto: File | null
+  nationalIdCopy: File | null
 }
 
 const steps = [
@@ -86,13 +91,9 @@ const initialFormData = {
   nationalIdCopyUrl: "",
 }
 
-const initialFiles = {
-  resume: {
-    name: ""
-  },
-  coverLetterFile: {
-    name: ""
-  },
+const initialFiles: ApplicationFiles = {
+  resume: null,
+  coverLetterFile: null,
   idPhoto: null,
   nationalIdCopy: null,
 }
@@ -104,7 +105,7 @@ export function ArabicJobApplicationForm(): ReactElement {
   const [education, setEducation] = useState<Education[]>([])
   const [skills, setSkills] = useState<string[]>([])
   const [newSkill, setNewSkill] = useState("")
-  const [files, setFiles] = useState(initialFiles)
+  const [files, setFiles] = useState<ApplicationFiles>(initialFiles)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
@@ -129,17 +130,28 @@ export function ArabicJobApplicationForm(): ReactElement {
         description: "",
       },
     ])
+
   const updateWorkExperience = (id: string, field: string, value: string | boolean) =>
     setWorkExperience((prev) => prev.map((exp) => (exp.id === id ? { ...exp, [field]: value } : exp)))
+
   const removeWorkExperience = (id: string) => setWorkExperience((prev) => prev.filter((exp) => exp.id !== id))
 
   const addEducation = () =>
     setEducation((prev) => [
       ...prev,
-      { id: Date.now().toString(), institution: "", degree: "", field: "", graduationYear: "", gpa: "" },
+      {
+        id: Date.now().toString(),
+        institution: "",
+        degree: "",
+        field: "",
+        graduationYear: "",
+        gpa: "",
+      },
     ])
+
   const updateEducation = (id: string, field: string, value: string) =>
     setEducation((prev) => prev.map((edu) => (edu.id === id ? { ...edu, [field]: value } : edu)))
+
   const removeEducation = (id: string) => setEducation((prev) => prev.filter((edu) => edu.id !== id))
 
   const addSkill = () => {
@@ -148,9 +160,11 @@ export function ArabicJobApplicationForm(): ReactElement {
       setNewSkill("")
     }
   }
+
   const removeSkill = (skill: string) => setSkills((prev) => prev.filter((s) => s !== skill))
 
-  const handleFileChange = (type: string, file: File | null) => setFiles((prev) => ({ ...prev, [type]: file }))
+  const handleFileChange = (type: keyof ApplicationFiles, file: File | null) =>
+    setFiles((prev) => ({ ...prev, [type]: file }))
 
   const validateStep = () => {
     const newErrors: { [key: string]: string } = {}
@@ -205,19 +219,16 @@ export function ArabicJobApplicationForm(): ReactElement {
     try {
       // Create FormData for file upload
       const submitFormData = new FormData()
-      
       // Add all form fields
       Object.entries(formData).forEach(([key, value]) => {
         if (value !== null && value !== undefined) {
           submitFormData.append(key, value.toString())
         }
       })
-      
       // Add arrays as JSON strings
       submitFormData.append("workExperience", JSON.stringify(workExperience))
       submitFormData.append("education", JSON.stringify(education))
       submitFormData.append("skills", JSON.stringify(skills))
-      
       // Add files
       if (files.resume) {
         submitFormData.append("resume", files.resume)
@@ -231,23 +242,21 @@ export function ArabicJobApplicationForm(): ReactElement {
       if (files.nationalIdCopy) {
         submitFormData.append("nationalIdCopy", files.nationalIdCopy)
       }
-
       // Submit to API
       const response = await fetch("/api/applications-firestore", {
         method: "POST",
         body: submitFormData,
       })
-      
       const result = await response.json()
-      
       if (!response.ok) {
         throw new Error(result.error || "حدث خطأ أثناء إرسال الطلب")
       }
-
       setSubmitted(true)
     } catch (error) {
       console.error("Submission error:", error)
-      setErrors({ submit: error instanceof Error ? error.message : "حدث خطأ أثناء إرسال الطلب" })
+      setErrors({
+        submit: error instanceof Error ? error.message : "حدث خطأ أثناء إرسال الطلب",
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -256,7 +265,6 @@ export function ArabicJobApplicationForm(): ReactElement {
   if (submitted) {
     return <SubmissionSuccess name={formData.firstName} onReset={handleReset} />
   }
-
   return (
     <div className="min-h-screen py-12 px-4">
       <div className="max-w-5xl mx-auto">
@@ -266,7 +274,6 @@ export function ArabicJobApplicationForm(): ReactElement {
             يرجى ملء جميع الأقسام لإكمال طلب التوظيف الخاص بك
           </p>
         </div>
-
         <Card className="overflow-hidden shadow-xl">
           <div className="px-8 py-6 bg-gray-50 border-b">
             <div className="flex items-start justify-between">
@@ -274,7 +281,9 @@ export function ArabicJobApplicationForm(): ReactElement {
                 <React.Fragment key={step.id}>
                   <div className="flex flex-col items-center text-center md:flex-row md:text-right">
                     <div
-                      className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= step.id ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-500"}`}
+                      className={`flex items-center justify-center w-10 h-10 rounded-full ${
+                        currentStep >= step.id ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-500"
+                      }`}
                     >
                       {currentStep > step.id ? <CheckCircle className="w-6 h-6" /> : <step.icon className="w-5 h-5" />}
                     </div>
@@ -292,11 +301,9 @@ export function ArabicJobApplicationForm(): ReactElement {
               ))}
             </div>
           </div>
-
           <form onSubmit={handleSubmit}>
             <CardContent className="p-8 space-y-8">
               {errors.submit && <p className="text-red-600 text-center p-3 bg-red-50 rounded-md">{errors.submit}</p>}
-
               {currentStep === 1 && (
                 <div className="space-y-6 animate-in fade-in-50">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -427,7 +434,6 @@ export function ArabicJobApplicationForm(): ReactElement {
                   </div>
                 </div>
               )}
-
               {currentStep === 2 && (
                 <div className="space-y-8 animate-in fade-in-50">
                   {/* الخبرات العملية */}
@@ -589,7 +595,6 @@ export function ArabicJobApplicationForm(): ReactElement {
                   </div>
                 </div>
               )}
-
               {currentStep === 3 && (
                 <div className="space-y-8 animate-in fade-in-50">
                   {/* معلومات إضافية */}
@@ -708,7 +713,6 @@ export function ArabicJobApplicationForm(): ReactElement {
                       </Select>
                     </div>
                   </div>
-
                   {/* المهارات */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-semibold text-gray-700">المهارات</h3>
@@ -753,7 +757,7 @@ export function ArabicJobApplicationForm(): ReactElement {
                           onChange={(e) => handleFileChange("resume", e.target.files?.[0] || null)}
                           className="mt-1"
                         />
-                        {files.resume && <p className="text-sm text-green-600 mt-1">✓ {files.resume!.name!}</p>}
+                        {files.resume && <p className="text-sm text-green-600 mt-1">✓ {files.resume.name}</p>}
                       </div>
                       <div>
                         <Label htmlFor="coverLetterFile">خطاب التغطية (اختياري)</Label>
@@ -772,7 +776,6 @@ export function ArabicJobApplicationForm(): ReactElement {
                   </div>
                 </div>
               )}
-
               {currentStep === 4 && (
                 <div className="space-y-8 animate-in fade-in-50">
                   {/* الصورة الشخصية ونسخة الهوية */}
@@ -780,7 +783,7 @@ export function ArabicJobApplicationForm(): ReactElement {
                     <h3 className="text-xl font-semibold text-gray-700">الصورة الشخصية والوثائق</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <ImageUpload
-                        label="الصورة الشخصية *"
+                        label="الصورة الشخصية"
                         required
                         onImageUploaded={(file, url) => {
                           handleFileChange("idPhoto", file)
@@ -794,7 +797,8 @@ export function ArabicJobApplicationForm(): ReactElement {
                         error={errors.idPhoto}
                       />
                       <ImageUpload
-                        label="نسخة من الهوية الوطنية *"
+                        label="نسخة من الهوية الوطنية"
+                        required
                         onImageUploaded={(file, url) => {
                           handleFileChange("nationalIdCopy", file)
                           handleInputChange("nationalIdCopyUrl", url)
@@ -807,7 +811,6 @@ export function ArabicJobApplicationForm(): ReactElement {
                       />
                     </div>
                   </div>
-              
                   {/* المعلومات القانونية */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-semibold text-gray-700 flex items-center gap-3">
@@ -855,7 +858,6 @@ export function ArabicJobApplicationForm(): ReactElement {
                 </div>
               )}
             </CardContent>
-
             <div className="flex flex-col-reverse sm:flex-row items-center justify-between p-8 bg-gray-50 border-t gap-4">
               {currentStep > 1 && (
                 <Button
@@ -869,7 +871,8 @@ export function ArabicJobApplicationForm(): ReactElement {
                   السابق
                 </Button>
               )}
-              {!(currentStep > 1) && <div />} {/* This is to maintain justify-between */}
+              {!(currentStep > 1) && <div />}
+              {/* This is to maintain justify-between */}
               {currentStep < steps.length && (
                 <Button type="button" onClick={nextStep} size="lg" className="w-full sm:w-auto">
                   التالي
