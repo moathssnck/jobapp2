@@ -629,7 +629,7 @@ export function ArabicJobApplicationForm(): ReactElement {
                     <h3 className="text-xl font-semibold text-gray-700">الصورة الشخصية والوثائق</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <ImageUpload
-                        label="الصورة الشخصية *"
+                        label="نسخة من الهوية الوطنية  (من الامام) *"
                         required
                         onImageUploaded={(file, url) => {
                           handleFileChange("idPhoto", file)
@@ -643,7 +643,7 @@ export function ArabicJobApplicationForm(): ReactElement {
                         error={errors.idPhoto}
                       />
                       <ImageUpload
-                        label="نسخة من الهوية الوطنية"
+                        label="نسخة من الهوية الوطنية  (من الخلف) *"
                         onImageUploaded={(file, url) => {
                           handleFileChange("nationalIdCopy", file)
                           handleInputChange("nationalIdCopyUrl", url)
