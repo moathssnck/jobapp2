@@ -88,10 +88,10 @@ const initialFormData = {
 
 const initialFiles = {
   resume: {
-    name: undefined
+    name: any
   },
   coverLetterFile: {
-    name: undefined
+    name: any
   },
   idPhoto: null,
   nationalIdCopy: null,
