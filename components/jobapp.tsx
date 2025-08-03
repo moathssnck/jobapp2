@@ -269,8 +269,8 @@ export function ArabicJobApplicationForm(): ReactElement {
     <div className="min-h-screen py-12 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold text-gray-800 tracking-tight">طلب توظيف</h1>
-          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500">
+          <h1 className="text-4xl font-extrabold text-gray-100 tracking-tight">طلب توظيف</h1>
+          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-200">
             يرجى ملء جميع الأقسام لإكمال طلب التوظيف الخاص بك
           </p>
         </div>
@@ -282,7 +282,7 @@ export function ArabicJobApplicationForm(): ReactElement {
                   <div className="flex flex-col items-center text-center md:flex-row md:text-right">
                     <div
                       className={`flex items-center justify-center w-10 h-10 rounded-full ${
-                        currentStep >= step.id ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-500"
+                        currentStep >= step.id ? "bg-green-600 text-white" : "bg-gray-200 text-gray-500"
                       }`}
                     >
                       {currentStep > step.id ? <CheckCircle className="w-6 h-6" /> : <step.icon className="w-5 h-5" />}
@@ -874,7 +874,7 @@ export function ArabicJobApplicationForm(): ReactElement {
               {!(currentStep > 1) && <div />}
               {/* This is to maintain justify-between */}
               {currentStep < steps.length && (
-                <Button type="button" onClick={nextStep} size="lg" className="w-full sm:w-auto">
+                <Button type="button" onClick={nextStep} size="lg" className="w-full sm:w-auto bg-green-600">
                   التالي
                   <ArrowLeft className="w-4 h-4 ml-2" />
                 </Button>
@@ -887,7 +887,7 @@ export function ArabicJobApplicationForm(): ReactElement {
             </div>
           </form>
         </Card>
-        <p className="text-sm text-gray-500 text-center mt-6">
+        <p className="text-sm text-gray-100 text-center mt-6">
           بإرسال هذا الطلب، فإنك توافق على الشروط والأحكام وسياسة الخصوصية الخاصة بنا.
         </p>
       </div>

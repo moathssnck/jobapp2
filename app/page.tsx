@@ -2,7 +2,7 @@ import { ArabicJobApplicationForm } from "@/components/jobapp";
 
 export default function Home() {
   return (
-    <main className="bg-gray-50" dir="rtl">
+    <main className="bg-green-500" dir="rtl">
       <ArabicJobApplicationForm />
     </main>
   )
