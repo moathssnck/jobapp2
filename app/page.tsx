@@ -431,7 +431,7 @@ export default function ArabicJobApplicationForm() {
                       <SelectValue placeholder="اختر الجنسية" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="saudi">عماني</SelectItem>
+                      <SelectItem value="omani">عماني</SelectItem>
                       <SelectItem value="saudi">سعودي</SelectItem>
                       <SelectItem value="egyptian">مصري</SelectItem>
                       <SelectItem value="jordanian">أردني</SelectItem>
