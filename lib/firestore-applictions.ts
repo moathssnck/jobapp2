@@ -1,22 +1,21 @@
 import {
-    getFirestore,
-    collection,
-    addDoc,
-    doc,
-    getDoc,
-    getDocs,
-    updateDoc,
-    deleteDoc,
-    query,
-    where,
-    orderBy,
-    limit,
-    startAfter,
-    Timestamp,
-    type DocumentSnapshot,
-  } from "firebase/firestore"
-  
-  const db = getFirestore()
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
+  limit,
+  startAfter,
+  Timestamp,
+  type DocumentSnapshot,
+} from "firebase/firestore"
+import { db } from "./firestore"
   
   export interface ApplicationData {
     // Personal Information

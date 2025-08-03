@@ -86,7 +86,6 @@ export default function ArabicJobApplicationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
-  const [idPhotoPreview, setIdPhotoPreview] = useState<string | null>(null)
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -149,15 +148,6 @@ export default function ArabicJobApplicationForm() {
 
   const handleFileChange = (type: string, file: File | null) => {
     setFiles((prev) => ({ ...prev, [type]: file }))
-
-    // Create preview for ID photo
-    if (type === "idPhoto" && file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        setIdPhotoPreview(e.target?.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
   }
 
   const validateForm = () => {
@@ -271,7 +261,6 @@ export default function ArabicJobApplicationForm() {
                 setEducation([])
                 setSkills([])
                 setFiles({ resume: null, coverLetter: null, portfolio: null, idPhoto: null, nationalIdCopy: null })
-                setIdPhotoPreview(null)
                 setErrors({})
               }}
             >

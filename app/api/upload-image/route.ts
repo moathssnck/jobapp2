@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get ImgBB API key from environment
-    const apiKey = process.env.b
+    const apiKey = process.env.IMGBB_API_KEY
     if (!apiKey) {
       return NextResponse.json({ error: "مفتاح API غير متوفر" }, { status: 500 })
     }
