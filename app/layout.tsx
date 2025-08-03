@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'شركة الاتحاد المتكاملة للتوظيف',
-  description: 'نموذج طلب توظيف من شركة الاتحاد ',
+  description: 'نموذج طلب توظيف من شركة الاتحاد المتكاملة للتوظيف ',
 }
 
 export default function RootLayout({
