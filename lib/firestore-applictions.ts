@@ -92,14 +92,6 @@ import { db } from "./firestore"
     data: Omit<ApplicationData, "createdAt" | "updatedAt" | "status">,
   ): Promise<string> {
     try {
-      // Check if email already exists
-      const existingQuery = query(collection(db, "applications"), where("email", "==", data.email))
-      const existingDocs = await getDocs(existingQuery)
-  
-      if (!existingDocs.empty) {
-        throw new Error("يوجد طلب مسجل بهذا البريد الإلكتروني مسبقاً")
-      }
-  
       const applicationData: ApplicationData = {
         ...data,
         status: "pending",

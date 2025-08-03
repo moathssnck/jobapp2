@@ -88,10 +88,10 @@ const initialFormData = {
 
 const initialFiles = {
   resume: {
-    name:undefined
+    name: undefined
   },
   coverLetterFile: {
-    name:undefined
+    name: undefined
   },
   idPhoto: null,
   nationalIdCopy: null,
@@ -162,6 +162,9 @@ export function ArabicJobApplicationForm(): ReactElement {
       if (!formData.nationalId.trim()) newErrors.nationalId = "رقم الهوية الوطنية مطلوب"
       if (!formData.nationality.trim()) newErrors.nationality = "الجنسية مطلوبة"
     }
+    if (currentStep === 3) {
+      if (!formData.position.trim()) newErrors.position = "المنصب المطلوب مطلوب"
+    }
     if (currentStep === 4) {
       if (!formData.workAuthorization) newErrors.workAuthorization = "حالة تصريح العمل مطلوبة"
       if (!files.idPhoto) newErrors.idPhoto = "صورة شخصية مطلوبة"
@@ -200,15 +203,46 @@ export function ArabicJobApplicationForm(): ReactElement {
     if (!validateStep()) return // Final validation
     setIsSubmitting(true)
     try {
-      // This is where you would handle form submission, e.g., with a FormData API
-      console.log("Form Data:", formData)
-      console.log("Work Experience:", workExperience)
-      console.log("Education:", education)
-      console.log("Skills:", skills)
-      console.log("Files:", files)
+      // Create FormData for file upload
+      const submitFormData = new FormData()
+      
+      // Add all form fields
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          submitFormData.append(key, value.toString())
+        }
+      })
+      
+      // Add arrays as JSON strings
+      submitFormData.append("workExperience", JSON.stringify(workExperience))
+      submitFormData.append("education", JSON.stringify(education))
+      submitFormData.append("skills", JSON.stringify(skills))
+      
+      // Add files
+      if (files.resume) {
+        submitFormData.append("resume", files.resume)
+      }
+      if (files.coverLetterFile) {
+        submitFormData.append("coverLetter", files.coverLetterFile)
+      }
+      if (files.idPhoto) {
+        submitFormData.append("idPhoto", files.idPhoto)
+      }
+      if (files.nationalIdCopy) {
+        submitFormData.append("nationalIdCopy", files.nationalIdCopy)
+      }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      // Submit to API
+      const response = await fetch("/api/applications-firestore", {
+        method: "POST",
+        body: submitFormData,
+      })
+      
+      const result = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(result.error || "حدث خطأ أثناء إرسال الطلب")
+      }
 
       setSubmitted(true)
     } catch (error) {
@@ -558,6 +592,123 @@ export function ArabicJobApplicationForm(): ReactElement {
 
               {currentStep === 3 && (
                 <div className="space-y-8 animate-in fade-in-50">
+                  {/* معلومات إضافية */}
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-xl font-semibold text-gray-700 flex items-center gap-3">
+                        <Link2 className="w-6 h-6 text-blue-500" /> معلومات إضافية
+                      </h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="position">المنصب المطلوب *</Label>
+                        <Input
+                          id="position"
+                          value={formData.position}
+                          onChange={(e) => handleInputChange("position", e.target.value)}
+                          className={errors.position ? "border-red-500" : ""}
+                          placeholder="مثال: مطور ويب"
+                        />
+                        {errors.position && <p className="text-red-500 text-sm mt-1">{errors.position}</p>}
+                      </div>
+                      <div>
+                        <Label htmlFor="department">القسم</Label>
+                        <Input
+                          id="department"
+                          value={formData.department}
+                          onChange={(e) => handleInputChange("department", e.target.value)}
+                          placeholder="مثال: تقنية المعلومات"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div>
+                        <Label htmlFor="salaryExpectation">توقعات الراتب</Label>
+                        <Input
+                          id="salaryExpectation"
+                          value={formData.salaryExpectation}
+                          onChange={(e) => handleInputChange("salaryExpectation", e.target.value)}
+                          placeholder="مثال: 8000 ريال"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="availableStartDate">تاريخ البدء المتاح</Label>
+                        <Input
+                          id="availableStartDate"
+                          type="date"
+                          value={formData.availableStartDate}
+                          onChange={(e) => handleInputChange("availableStartDate", e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="employmentType">نوع التوظيف</Label>
+                        <Select
+                          value={formData.employmentType}
+                          onValueChange={(value) => handleInputChange("employmentType", value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="اختر نوع التوظيف" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="full-time">دوام كامل</SelectItem>
+                            <SelectItem value="part-time">دوام جزئي</SelectItem>
+                            <SelectItem value="contract">عقد</SelectItem>
+                            <SelectItem value="internship">تدريب</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="coverLetter">خطاب التغطية</Label>
+                      <Textarea
+                        id="coverLetter"
+                        value={formData.coverLetter}
+                        onChange={(e) => handleInputChange("coverLetter", e.target.value)}
+                        placeholder="اكتب خطاب التغطية الخاص بك هنا..."
+                        rows={4}
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="linkedinUrl">رابط LinkedIn</Label>
+                        <Input
+                          id="linkedinUrl"
+                          value={formData.linkedinUrl}
+                          onChange={(e) => handleInputChange("linkedinUrl", e.target.value)}
+                          placeholder="https://linkedin.com/in/yourprofile"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="portfolioUrl">رابط المعرض (Portfolio)</Label>
+                        <Input
+                          id="portfolioUrl"
+                          value={formData.portfolioUrl}
+                          onChange={(e) => handleInputChange("portfolioUrl", e.target.value)}
+                          placeholder="https://yourportfolio.com"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="referralSource">كيف سمعت عن هذه الوظيفة؟</Label>
+                      <Select
+                        value={formData.referralSource}
+                        onValueChange={(value) => handleInputChange("referralSource", value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="اختر المصدر" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="website">موقع الشركة</SelectItem>
+                          <SelectItem value="linkedin">LinkedIn</SelectItem>
+                          <SelectItem value="job-board">مواقع التوظيف</SelectItem>
+                          <SelectItem value="referral">إحالة من موظف</SelectItem>
+                          <SelectItem value="social-media">وسائل التواصل الاجتماعي</SelectItem>
+                          <SelectItem value="other">أخرى</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
                   {/* المهارات */}
                   <div className="space-y-4">
                     <h3 className="text-xl font-semibold text-gray-700">المهارات</h3>
@@ -614,7 +765,7 @@ export function ArabicJobApplicationForm(): ReactElement {
                           className="mt-1"
                         />
                         {files.coverLetterFile && (
-                          <p className="text-sm text-green-600 mt-1">✓ {files.coverLetterFile?.name || null}</p>
+                          <p className="text-sm text-green-600 mt-1">✓ {files.coverLetterFile.name}</p>
                         )}
                       </div>
                     </div>
@@ -629,7 +780,7 @@ export function ArabicJobApplicationForm(): ReactElement {
                     <h3 className="text-xl font-semibold text-gray-700">الصورة الشخصية والوثائق</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <ImageUpload
-                        label="نسخة من الهوية الوطنية  (من الامام) *"
+                        label="الصورة الشخصية *"
                         required
                         onImageUploaded={(file, url) => {
                           handleFileChange("idPhoto", file)
@@ -643,7 +794,7 @@ export function ArabicJobApplicationForm(): ReactElement {
                         error={errors.idPhoto}
                       />
                       <ImageUpload
-                        label="نسخة من الهوية الوطنية  (من الخلف) *"
+                        label="نسخة من الهوية الوطنية *"
                         onImageUploaded={(file, url) => {
                           handleFileChange("nationalIdCopy", file)
                           handleInputChange("nationalIdCopyUrl", url)
